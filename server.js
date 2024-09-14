@@ -16,7 +16,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // Usar las rutas de reservas
-app.use('/api', reservasRoutes);
+app.use('/api/reservas', reservasRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

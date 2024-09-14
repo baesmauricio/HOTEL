@@ -1,12 +1,43 @@
-let reservasBD = []; // Arreglo para almacenar las reservas temporalmente
+// Arreglo para almacenar las reservas temporalmente
+let reservasBD = [
+  {
+  id: 1,
+  hotel: "Tompson",
+  tipo: "Doble",
+  num_huespedes: 2,
+  fechaEntrada: "2024-09-08",
+  fechaSalida: "2024-09-12",
+  estado: "Disponible",
+  precio: 400,
+},
+{
+  id: 2,
+  hotel: "American",
+  tipo: "Cuadruple",
+  num_huespedes: 4,
+  fechaEntrada: "2024-09-10",
+  fechaSalida: "2024-09-20",
+  estado: "Disponible",
+  precio: 400,
+},
+{
+  id: 3,
+  hotel: "Sheraton",
+  tipo: "Triple",
+  num_huespedes: 3,
+  fechaEntrada: "2024-09-08",
+  fechaSalida: "2024-09-12",
+  estado: "Disponible",
+  precio: 400,
+},]; 
 
 // 1- Crear una nueva reserva
 exports.crearReserva = (req, res) => {
   try {
-    const { hotel, fecha_inicio, fecha_fin, tipo_habitacion, num_huespedes } = req.body;
+    const { hotel, fecha_inicio, fecha_fin, tipo_habitacion, num_huespedes, estado } = req.body;
 
     // Validar que los campos requeridos estén presentes
-    if (!hotel || !fecha_inicio || !fecha_fin || !tipo_habitacion || !num_huespedes) {
+    if (!hotel || !fecha_inicio || !fecha_fin || !tipo_habitacion || !num_huespedes || !estado) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
@@ -17,7 +48,7 @@ exports.crearReserva = (req, res) => {
       fecha_fin,
       tipo_habitacion,
       num_huespedes,
-      estado: "confirmada",
+      estado,
     };
 
     reservasBD.push(nuevaReserva);
@@ -30,7 +61,49 @@ exports.crearReserva = (req, res) => {
 // 2- Obtener todas las reservas
 exports.obtenerReservas = (req, res) => {
   try {
-    res.status(200).json(reservasBD);
+    const { nombreHotel, num_huespedes, estado, tipo, fechaEntrada, fechaSalida } = req.query;
+ 
+  let reservasFiltradas = reservasBD;
+ 
+  if (nombreHotel) {
+    reservasFiltradas = reservasFiltradas.filter(
+      (r) => r.hotel.toLowerCase() === nombreHotel.toLowerCase()
+    );
+  }
+ 
+  if (num_huespedes) {
+    reservasFiltradas = reservasFiltradas.filter(
+      (r) => r.num_huespedes === parseInt(num_huespedes)
+    );
+  }
+ 
+  if (estado) {
+    reservasFiltradas = reservasFiltradas.filter(
+      (r) => r.estado.toLowerCase() === estado.toLowerCase()
+    );
+  }
+ 
+  if (tipo) {
+    reservasFiltradas = reservasFiltradas.filter(
+      (r) => r.tipo.toLowerCase() === tipo.toLowerCase()
+    );
+  }
+ 
+  if (fechaEntrada && fechaSalida) {
+    reservasFiltradas = reservasFiltradas.filter(
+      (r) => r.fechaEntrada >= fechaEntrada && r.fechaSalida <= fechaSalida
+    );
+  }
+ 
+  if (reservasFiltradas.length === 0) {
+    return res.status(404).json({ error: "No se encontraron reservaciones con los criterios dados." });
+  }
+ 
+  res.json({
+    msg: "Reservaciones obtenidas con éxito.",
+    data: reservasFiltradas,
+  });
+    
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener las reservas", error });
   }
@@ -90,63 +163,5 @@ exports.eliminarReserva = (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ mensaje: "Error al eliminar la reserva", error });
-  }
-};
-
-// 6- Filtrar reservas por hotel
-exports.filtrarReservasPorHotel = (req, res) => {
-  try {
-    const { hotel } = req.query;
-    const reservasFiltradas = reservasBD.filter(r => r.hotel === hotel);
-    res.status(200).json(reservasFiltradas);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al filtrar las reservas", error });
-  }
-};
-
-// 7. Filtrar reservas por rango de fechas
-exports.filtrarReservasPorFechas = (req, res) => {
-  try {
-    const { fecha_inicio, fecha_fin } = req.query;
-    const reservasFiltradas = reservasBD.filter(r => 
-      new Date(r.fecha_inicio) >= new Date(fecha_inicio) &&
-      new Date(r.fecha_fin) <= new Date(fecha_fin)
-    );
-    res.status(200).json(reservasFiltradas);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al filtrar las reservas", error });
-  }
-};
-
-// 8- Filtrar reservas por tipo de habitación
-exports.filtrarReservasPorTipo = (req, res) => {
-  try {
-    const { tipo_habitacion } = req.query;
-    const reservasFiltradas = reservasBD.filter(r => r.tipo_habitacion === tipo_habitacion);
-    res.status(200).json(reservasFiltradas);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al filtrar las reservas", error });
-  }
-};
-
-// 9- Filtrar reservas por estado
-exports.filtrarReservasPorEstado = (req, res) => {
-  try {
-    const { estado } = req.query;
-    const reservasFiltradas = reservasBD.filter(r => r.estado === estado);
-    res.status(200).json(reservasFiltradas);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al filtrar las reservas", error });
-  }
-};
-
-// 10- Filtrar reservas por número de huéspedes
-exports.filtrarReservasPorNumeroHuespedes = (req, res) => {
-  try {
-    const { num_huespedes } = req.query;
-    const reservasFiltradas = reservasBD.filter(r => r.num_huespedes >= num_huespedes);
-    res.status(200).json(reservasFiltradas);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al filtrar las reservas", error });
   }
 };
