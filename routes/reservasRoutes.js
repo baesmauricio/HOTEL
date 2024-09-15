@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const reservasController = require('../controllers/reservasController');
 
-// 1- Crear una nueva reserva
+// 1- Ruta: Crear una nueva reserva
 router.post('/', reservasController.crearReserva);
 
+// 1.1 - Documentacion "Crear una nueva reserva "
 /**
  * @swagger
  * /reservas:
@@ -83,9 +84,10 @@ router.post('/', reservasController.crearReserva);
  *           type: string
  */
 
-// 2- Obtener lista de reservas (GET /api)
+// 2- Ruta: Obtener lista de reservas (GET /api)
 router.get("/", reservasController.obtenerReservas);
 
+// 2.1 - Documentacion "Obtener lista de reservas "
 /**
  * @swagger
  * /reservas:
@@ -141,9 +143,10 @@ router.get("/", reservasController.obtenerReservas);
  */
 
 
-// 3- Obtener reserva por ID (GET /api/)
+// 3- Ruta: Obtener reserva por ID (GET /api/)
 router.get("/:id", reservasController.obtenerReservaPorId);
 
+// 3.1 - Documentacion " Obtener reserva por ID "
 /**
  * @swagger
  * /reservas/{id}:
@@ -170,8 +173,10 @@ router.get("/:id", reservasController.obtenerReservaPorId);
  *         description: Error al obtener la reserva
  */
 
-//4- Actualizar reserva por ID (PUT /api/)
+// 4- Ruta: Actualizar reserva por ID (PUT /api/)
 router.put("/:id", reservasController.actualizarReserva);
+
+// 4.1 - Documentacion " Actualizar reserva por ID "
 /**
  * @swagger
  * /reservas/{id}:
@@ -201,8 +206,10 @@ router.put("/:id", reservasController.actualizarReserva);
  */
 
 
-//5- Eliminar reserva por ID (DELETE /api/)
+// 5- Ruta: Eliminar reserva por ID (DELETE /api/)
 router.delete("/:id", reservasController.eliminarReserva);
+
+// 5.1 - Documentacion "Eliminar reserva por ID"
 /**
  * @swagger
  * /reservas/{id}:
