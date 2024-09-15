@@ -6,8 +6,36 @@ const reservasRoutes = require("./routes/reservasRoutes");
 // Configurar dotenv para usar las variables de entorno
 dotenv.config();
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 // Creamos una instancia de la aplicación
-const app = express();
+const app = express(); // Inicialización de la aplicación antes de su uso
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API de Reservas de Hoteles",
+      version: "1.0.0",
+      description: "API que gestiona las reservas en hoteles",
+      contact: {
+        name: "Baesmauricio",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:3000/api", 
+      },
+    ],
+  },
+  apis: ["./routes/*.js"], 
+};
+// Middleware para servir la documentación de Swagger en la ruta /api-docs
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+
 
 // Definimos el puerto en el que correrá el servidor
 const port = process.env.PORT || 3000;
@@ -36,4 +64,5 @@ app.listen(port, () => {
 //  "fecha_fin": "2024-09-10",
 //  "tipo_habitacion": "doble",
 //  "num_huespedes": 2
+//  " estado": "confirmado"
 //}
